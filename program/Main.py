@@ -4,6 +4,8 @@ import shutil
 from PyFAC_2D_3D import PyFAC
 from Input_Setup import InputSetup
 
+import torch
+
 
 def copy_working_files(cwd_, working_library_, project_name_):
     for file_name_ in os.listdir(cwd_):
@@ -27,11 +29,13 @@ if __name__ == "__main__":
     parent_dir = os.path.dirname(cwd)
     library_dir = parent_dir + '\\Library'
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     if not os.path.exists(library_dir):
         os.makedirs(library_dir)
 
     (processor_number, parallel, time_stamp, model_type, solver_dimension, policy_type,
-     action_mode, reward_type, learning_rate, retrieve_training) = InputSetup(library_dir).input_setup()
+     action_mode, reward_type, learning_rate, retrieve_training, use_fst, use_lstm) = InputSetup(library_dir).input_setup()
 
     frequency_range = [50, 400]
     amplitude_range = [1, 50]
@@ -43,12 +47,12 @@ if __name__ == "__main__":
 
     if solver_dimension == 2:
         if model_type == 'RAE2822':
-            project_name = 'RAE2822-2D-AFC-6k-0.005-0.6-0.65'
+            project_name = 'RAE2822-2D-AFC-48k-0.01-0.6-0.65-FST'
         else:
             project_name = 'NACA0012-2D-AFC-11k-0.005-0.6-0.65'
     else:
         if model_type == 'RAE2822':
-            project_name = 'RAE2822-2D-AFC-6k-0.005-0.6-0.65'
+            project_name = 'RAE2822-2D-AFC-553k-0.005-0.6-0.65'
         else:
             project_name = 'NACA0012-3D-AFC-349k-0.005-0.6-0.65'
 
@@ -71,7 +75,10 @@ if __name__ == "__main__":
         policy_type,
         learning_rate,
         solver_dimension,
-        parallel
+        parallel,
+        use_fst,
+        use_lstm,
+        device
     ).model_learn()
 
 

@@ -5,6 +5,7 @@ import torch
 class DefineModel:
     def __init__(
             self,
+            device_,
             retrieve_training_,
             policy_type_,
             working_library_,
@@ -17,6 +18,8 @@ class DefineModel:
             tau_=0.005,
             gamma_=0.99
     ):
+        self.device = device_
+
         self.retrieve_training = retrieve_training_
         self.policy_type = policy_type_
         self.working_library = working_library_
@@ -70,7 +73,7 @@ class DefineModel:
 
     def sac(self):
         if self.retrieve_training:
-            self.model = SAC.load(self.working_library + '\\model\\final_model', env=self.vec_env)
+            self.model = SAC.load(self.working_library + '\\model\\final_model', env=self.vec_env, device=self.device)
             self.model.load_replay_buffer(self.working_library + '\\model\\final_buffer')
 
             self.elapsed_num_steps = int(self.model.replay_buffer.size())
@@ -88,7 +91,9 @@ class DefineModel:
                 tau=self.tau,
                 gamma=self.gamma,
                 gradient_steps=self.gradient_steps,
-                verbose=1
+                verbose=1,
+                device=self.device,
+                policy_kwargs=dict(hidden_sizes=(512, 512))
             )
 
     def ppo(self):

@@ -16,6 +16,8 @@ class InputSetup:
         self.learning_rate = 1e-4
         self.solver_dimension = '2D'
         self.retrieve_training = False
+        self.use_fst = False
+        self.use_lstm = False
 
     def input_setup(self):
         self.processor_number = input('Input PROCESSOR NUMBER (integer): ')
@@ -53,8 +55,50 @@ class InputSetup:
                 print('\n')
                 continue
 
+        while True:
+            self.use_fst = input('Apply FST?(Y/N)')
+
+            if self.use_fst == 'Y' or self.use_fst == 'y':
+                self.use_fst = True
+                print('Apply FST')
+                print('\n')
+                break
+
+            elif self.use_fst == 'N' or self.use_fst == 'n':
+                self.use_fst = False
+                print('Do not Apply FST')
+                print('\n')
+                break
+
+            else:
+                print('Check Input')
+                print('\n')
+                continue
+
+        while True:
+            self.use_lstm = input('Apply FST?(Y/N)')
+
+            if self.use_lstm == 'Y' or self.use_lstm == 'y':
+                self.use_lstm = True
+                print('Apply LSTM')
+                print('\n')
+                break
+
+            elif self.use_lstm == 'N' or self.use_lstm == 'n':
+                self.use_lstm = False
+                print('Do not Apply LSTM')
+                print('\n')
+                break
+
+            else:
+                print('Check Input')
+                print('\n')
+                continue
+
         return (self.processor_number, self.parallel, self.time_stamp, self.model_type, self.solver_dimension,
-                self.policy_type, self.action_mode, self.reward_type, self.learning_rate, self.retrieve_training)
+                self.policy_type, self.action_mode, self.reward_type, self.learning_rate, self.retrieve_training,
+                self.use_fst, self.use_lstm)
+
 
     def training_configuration(self):
 

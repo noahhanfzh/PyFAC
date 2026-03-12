@@ -1,6 +1,6 @@
 from stable_baselines3.common.vec_env.subproc_vec_env import SubprocVecEnv
 
-from PyFAC_ENV import Env
+from PyFAC_Env import Env
 
 from Plot_Output import PlotOutput
 
@@ -22,8 +22,12 @@ class PyFAC:
             policy_type,
             learning_rate,
             solver_dimension,
-            parallel
+            parallel,
+            use_fst,
+            use_lstm,
+            device
     ):
+        self.device = device
 
         self.action_mode = action_mode
         self.working_library = working_library
@@ -48,6 +52,9 @@ class PyFAC:
         self.solver_dimension = solver_dimension
         self.parallel = parallel
 
+        self.use_fst = use_fst
+        self.use_lstm = use_lstm
+
     def make_env(self, rank):
         def _init():
             return Env(
@@ -59,7 +66,10 @@ class PyFAC:
                 frequency_range = self.frequency_range,
                 amplitude_range = self.amplitude_range,
                 reward_type = self.reward_type,
-                env_num = rank
+                env_num = rank,
+                use_fst = self.use_fst,
+                use_lstm = self.use_lstm,
+                device = self.device
             )
         return _init
 
@@ -68,6 +78,7 @@ class PyFAC:
         vec_env = SubprocVecEnv(envs)
 
         model, elapsed_num_steps = DefineModel(
+            device_=self.device,
             retrieve_training_=self.retrieve_training,
             policy_type_=self.policy_type,
             working_library_=self.working_library,
